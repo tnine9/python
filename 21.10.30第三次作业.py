@@ -72,3 +72,9 @@ while num != 0:
     num = num // 10
 
 f = [5, 2, 4, 7, 9, 1, 3, 5, 4, 0, 6, 1, 3]
+f1=0
+for f1 in range(len(f)):
+    for f2 in range(0,len(f)-1):
+        if f[f2]>f[f2+1]:
+            f[f2],f[f2+1]=f[f2+1],f[f2]
+print(f)
