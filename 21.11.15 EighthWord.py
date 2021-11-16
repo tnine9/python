@@ -11,6 +11,7 @@ f = xlrd.open_workbook(filename=r"D:\测试开发\python\day8\2020年每个月�
 # 全年销量最低的衣服
 a, gross_sales, sum_age_money, sum, c = 0, 0, 0, 0, 0
 total_sales_volume = {}
+sum_age = {}
 for a in range(0, 12):
     sheet = f.sheet_by_index(a)  # 读取每张表格
     # 读取数据
@@ -23,14 +24,17 @@ for a in range(0, 12):
         # 计算各种类销售总量
         if data[1] not in total_sales_volume:
             total_sales_volume.setdefault(data[1], data[4])
+            sum_age.setdefault(data[1], data[4]*data[2])
         else:
             total_sales_volume[data[1]] = total_sales_volume[data[1]] + data[4]
+            sum_age[data[1]]=sum_age[data[1]]+data[4]*data[2]
         # 计算全部的销售总量
         sum = sum + data[4]
 
-list, b = [], 0
+b = 0
 print('年销售总额为:', round(sum_age_money, 2))
 for i in total_sales_volume:
     total_sales_volume[i] = (round(total_sales_volume[i] / sum * 100, 2))
     b += 1
 print('销售额占比为', total_sales_volume)
+print(sum_age)
