@@ -124,7 +124,7 @@ def database_transfer_accounts(go_names, come_names, go_password, go_money):  # 
                     return 5
 
 
-def bank_about():#银行的数据库查询
+def bank_about():  # 银行的数据库查询
     about_name = input('\t请输入您的姓名>>>')
     if about_name not in bank_database:
         return 1, None
@@ -266,10 +266,11 @@ def transfer_accounts():  # 转账
                           bank_database[come_names]['remaining_sum'], bank_name))
         break
 
-def about():#查询
+
+def about():  # 查询
     (about_i, about_name) = bank_about()
     if about_i == 1:
-        print('\t账户信息不存在!')
+        print('\t账户信息不存在! ')
     elif about_i == 2:
         print("\t密码错误!")
     elif about_i == 3:
