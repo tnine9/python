@@ -35,6 +35,9 @@ b = 0
 print('年销售总额为:', round(sum_age_money, 2))
 for i in total_sales_volume:
     total_sales_volume[i] = (round(total_sales_volume[i] / sum * 100, 2))
+    sum_age[i]=(round(sum_age[i] / sum_age_money * 100, 2))
     b += 1
-print('销售额占比为', total_sales_volume)
-print(sum_age)
+print('销售数量占比为', total_sales_volume)
+print('销售额占比为',sum_age)
+print('销量最低的为',max(total_sales_volume))
+print('最畅销的为',min(total_sales_volume))
