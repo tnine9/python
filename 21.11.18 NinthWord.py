@@ -357,8 +357,8 @@ def query_information():
     ****************************************************
                 '''
                 print(info % (
-                    data[1], data[2], data[8], data[3], data[4], data[5], data[6], data[7], data[9], data[10],
-                    data[11],))
+                    data[1], data[2], data[8], data[3], data[4], data[5], data[6], data[7], data[11], data[10],
+                    data[9],))
             break
         except TypeError:
             print('\t未查询到账户信息，请您开户后重试！')
