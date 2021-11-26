@@ -59,7 +59,7 @@ def welcome():
 
 # 开户
 def open_an_account():
-    while 1:
+    while True:
         names = input("\t请输入您的姓名>>>")  # 获取用户姓名
         try:
             password = input("\t请输入您的密码>>>")  # 获取用户密码
