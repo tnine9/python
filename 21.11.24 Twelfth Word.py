@@ -1,4 +1,4 @@
-import Thread
+import _thread
 import time
 
 egg_tart_cabinet = 0  # 蛋挞柜子
@@ -6,7 +6,7 @@ cashier = 0
 
 
 # 厨师类
-class Cook(Thread):
+class Cook(_thread):
     egg_tart = 0
 
     def run(self) -> None:
@@ -25,7 +25,7 @@ class Cook(Thread):
                 break
 
 
-class Customer(Thread):
+class Customer(_thread):
     money = 5000
     buy = 0
 
