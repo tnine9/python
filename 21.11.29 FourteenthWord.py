@@ -1,8 +1,10 @@
 import smtplib
+import zmail
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 
+# 第一种方法
 mail_host = "smtp.qq.com"  # 设置服务器
 mail_user = "1173577536@qq.com"  # 用户名
 mail_pass = "mbfruixdlwylbagg"  # 口令
@@ -13,6 +15,8 @@ receivers = ['1511308033@qq.com']  # 接收邮件，可设置为你的QQ邮箱�
 # 三个参数：第一个为文本内容，第二个 plain 设置文本格式，第三个 utf-8 设置编码
 message = MIMEMultipart()
 message['From'] = Header('1', 'utf-8')  # 发送者
+
+
 message['To'] = Header("测试", 'utf-8')  # 接收者
 subject = '测试邮件'
 message['Subject'] = Header(subject, 'utf-8')
@@ -34,14 +38,12 @@ try:
 except smtplib.SMTPException:
     print('Error: 无法发送邮件')
 
-
-import zmail
-
+# 第二种方法
 # 你的邮件内容
 mail_content = {
     'subject': '骂门华臻',  # 随便填写
     'content_text': '门华臻大傻屌',  # 随便填写
-    # 'attachments': ['C:\\Users\\15113\\Desktop\\day14\\计算器.html'],
+    'attachments': ['C:\\Users\\15113\\Desktop\\day14\\计算器.html'],
 }
 
 # 使用你的邮件账户名和密码登录服务器
