@@ -236,7 +236,7 @@ def draw_money():
 
 
 # 转账
-def transfer_accounts():
+def T_A():
     while True:
         go_names = input("\t请输入转出账号的姓名>>>")  # 获取转出账号用户姓名
         try:
@@ -253,51 +253,26 @@ def transfer_accounts():
         except ValueError:
             print('\t输入错误，账户余额只支持数字！')
             break
-        try:
-            sql = 'SELECT operation_time FROM user WHERE names = %s'
-            time_data = select(sql, go_names, 'one')  # 获取数据库内信息
-            if time_data[0] + datetime.timedelta(1) <= datetime.datetime.now():
-                sql = 'UPDATE user SET  cumulative_amount=0 WHERE names=%s'
-                update(sql, go_names)
+        conclusion = transfer_accounts(go_names, go_password, come_names, go_money)
 
-            #          姓名    密码      账户余额        账户类型       累计转账金额        操作时间
-            sql = 'SELECT names,password,remaining_sum,account_type,cumulative_amount,operation_time' \
-                  ' FROM user WHERE names = %s'
-            data = select(sql, go_names, 'one')  # 获取数据库内信息
-            sql = 'SELECT names,account_type FROM user WHERE names = %s'
-            data2 = select(sql, come_names, 'one')  # 获取数据库内信息
-
-            if data[1] != go_password:
-                print('\t密码错误!')
-                break
-            elif data[2] - go_money < 0:
-                print('\t账户余额不足!')
-                break
-            elif data[0] == data2[0]:
-                print('\t账户相同!')
-                break
-            elif (data[3] == 1 and data[4] >= 50000) or (data[3] == 1 and data[4] + go_money > 50000):
-                print('\t今日已限额!')
-                break
-            elif (data[3] == 2 and data[4] >= 20000) or (data[3] == 2 and data[4] + go_money > 20000):
-                print('\t今日已限额!')
-                break
-            else:
-                sql = 'UPDATE user SET remaining_sum = remaining_sum - %s WHERE names=%s '
-                sql0 = 'UPDATE user SET remaining_sum = remaining_sum + %s WHERE names=%s '
-                sql1 = 'UPDATE user SET cumulative_amount = cumulative_amount + %s WHERE names=%s '
-                sql2 = 'UPDATE user SET operation_time=%s WHERE names=%s '
-                param = [go_money, go_names]
-                param0 = [go_money, come_names]
-                param2 = [the_limit, go_names]
-                update(sql, param)
-                update(sql0, param0)
-                update(sql1, param)
-                update(sql2, param2)
-
-                sql2 = 'SELECT names,remaining_sum,account_type,operation_time FROM user WHERE names = %s'
-                data = select(sql2, go_names, 'one')  # 获取数据库内信息
-                info = '''
+        if conclusion == 1:
+            print('\t密码错误!')
+            break
+        elif conclusion == 2:
+            print('\t账户余额不足!')
+            break
+        elif conclusion == 3:
+            print('\t账户相同!')
+            break
+        elif conclusion == 4:
+            print('\t今日已限额!')
+            break
+        elif conclusion == 5:
+            print('\t未查询到账户信息，请您开户后重试！')
+        elif conclusion == 0:
+            sql2 = 'SELECT names,remaining_sum,account_type,operation_time FROM user WHERE names = %s'
+            data = select(sql2, go_names, 'one')  # 获取数据库内信息
+            info = '''
     ************************转账信息**********************
     *\t转帐姓名:%s
     *\t收款姓名:%s
@@ -307,12 +282,52 @@ def transfer_accounts():
     *\t操作时间:%s
     *\t银行名称:%s
     ****************************************************'''
-                print(info % (data[0], come_names, go_money, data[1], data[2], data[3], bank_name))
-            break
+            print(info % (data[0], come_names, go_money, data[1], data[2], data[3], bank_name))
+        break
 
-        except TypeError:
-            print('\t未查询到账户信息，请您开户后重试！')
-            break
+
+# 数据库转账
+def transfer_accounts(go_names, go_password, come_names, go_money):
+    try:
+        sql = 'SELECT operation_time FROM user WHERE names = %s'
+        time_data = select(sql, go_names, 'one')  # 获取数据库内信息
+        if time_data[0] + datetime.timedelta(1) <= datetime.datetime.now():
+            sql = 'UPDATE user SET  cumulative_amount=0 WHERE names=%s'
+            update(sql, go_names)
+
+        #          姓名    密码      账户余额        账户类型       累计转账金额        操作时间
+        sql = 'SELECT names,password,remaining_sum,account_type,cumulative_amount,operation_time' \
+              ' FROM user WHERE names = %s'
+        data = select(sql, go_names, 'one')  # 获取数据库内信息
+        sql = 'SELECT names,account_type FROM user WHERE names = %s'
+        data2 = select(sql, come_names, 'one')  # 获取数据库内信息
+
+        if data[1] != go_password:
+            return 1
+        elif data[2] - go_money < 0:
+            return 2
+        elif data[0] == data2[0]:
+            return 3
+        elif (data[3] == 1 and data[4] >= 50000) or (data[3] == 1 and data[4] + go_money > 50000):
+            return 4
+        elif (data[3] == 2 and data[4] >= 20000) or (data[3] == 2 and data[4] + go_money > 20000):
+            return 4
+        else:
+            sql = 'UPDATE user SET remaining_sum = remaining_sum - %s WHERE names=%s '
+            sql0 = 'UPDATE user SET remaining_sum = remaining_sum + %s WHERE names=%s '
+            sql1 = 'UPDATE user SET cumulative_amount = cumulative_amount + %s WHERE names=%s '
+            sql2 = 'UPDATE user SET operation_time=%s WHERE names=%s '
+            param = [go_money, go_names]
+            param0 = [go_money, come_names]
+            param2 = [the_limit, go_names]
+            update(sql, param)
+            update(sql0, param0)
+            update(sql1, param)
+            update(sql2, param2)
+            return 0
+
+    except TypeError:
+        return 5
 
 
 # 查询
@@ -366,20 +381,20 @@ def query_information():
 
 
 # 系统主体
-while True:
-    option_number = welcome()
-    if option_number == '1':
-        open_an_account()
-    elif option_number == '2':
-        dave_money()
-    elif option_number == '3':
-        draw_money()
-    elif option_number == '4':
-        transfer_accounts()
-    elif option_number == '5':
-        query_information()
-    elif option_number == '6':
-        print('\t欢迎您下次光临！')
-        break
-    else:
-        print('\t输入错误！请重新输入！')
+# while True:
+#     option_number = welcome()
+#     if option_number == '1':
+#         open_an_account()
+#     elif option_number == '2':
+#         dave_money()
+#     elif option_number == '3':
+#         draw_money()
+#     elif option_number == '4':
+#         T_A()
+#     elif option_number == '5':
+#         query_information()
+#     elif option_number == '6':
+#         print('\t欢迎您下次光临！')
+#         break
+#     else:
+#         print('\t输入错误！请重新输入！')
